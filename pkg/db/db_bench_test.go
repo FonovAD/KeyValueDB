@@ -37,6 +37,25 @@ func GetBenchTest(b *testing.B) {
 	b.StopTimer()
 }
 
+func DeleteBenchTest(b *testing.B) {
+	db, err := NewDB()
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < b.N; i++ {
+		for _, tc := range TCS {
+			db.Put(tc.Key, tc.Value)
+		}
+	}
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		for _, tc := range TCS {
+			db.Delete(tc.Key)
+		}
+	}
+	b.StopTimer()
+}
+
 type TestCase struct {
 	ID    int
 	Key   string
