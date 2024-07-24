@@ -33,3 +33,19 @@ func (db *DB) Hash(key string) int {
 	}
 	return sum % db.dbSize
 }
+
+func (db *DB) Lock() {
+	db.mu.Lock()
+}
+
+func (db *DB) Unlock() {
+	db.mu.Unlock()
+}
+
+func (db *DB) RLock() {
+	db.mu.RLock()
+}
+
+func (db *DB) RUnlock() {
+	db.mu.RUnlock()
+}
