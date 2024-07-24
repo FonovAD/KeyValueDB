@@ -61,3 +61,13 @@ func UnlockTest(t *testing.T) {
 	err := Unlock()
 	assert.NoError(t, err)
 }
+
+func RLockTest(t *testing.T) {
+	err := RLock()
+	assert.NoError(t, err)
+}
+
+func RUnlockTest(t *testing.T) {
+	err := RUnlock()
+	assert.NoError(t, err)
+}
