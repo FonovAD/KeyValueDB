@@ -132,6 +132,7 @@ func GetTest(t *testing.T) {
 		db, err := NewDB()
 		assert.NoError(t, err)
 
+		//плохо, что результаты теста зависят от db.Put
 		err = db.Put(tc.Key, tc.Value)
 		assert.NoError(t, err)
 
@@ -139,5 +140,45 @@ func GetTest(t *testing.T) {
 		value, err := db.Get(tc.Key)
 		assert.Equal(t, tc.Expected, err)
 		assert.Equal(t, tc.Value, value)
+	}
+}
+
+func PutTest(t *testing.T) {
+	type TestCase struct {
+		ID       int
+		Name     string
+		Key      string
+		Value    string
+		Expected error
+	}
+	tcs := []TestCase{
+		TestCase{
+			ID:       1,
+			Name:     "Basic case",
+			Key:      "Key",
+			Value:    "Value",
+			Expected: nil,
+		},
+		TestCase{
+			ID:       2,
+			Name:     "Empty key",
+			Key:      "",
+			Value:    "Value",
+			Expected: db.ErrInvalidKey,
+		},
+		TestCase{
+			ID:       3,
+			Name:     "Empty value",
+			Key:      "Key",
+			Value:    "",
+			Expected: db.ErrInvalidValue,
+		},
+	}
+	for _, tc := range tcs {
+		db, err := NewDB()
+		assert.NoError(t, err)
+
+		err = db.Put(tc.Key, tc.Value)
+		assert.Equal(t, tc.Expected, err)
 	}
 }
