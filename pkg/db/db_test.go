@@ -51,3 +51,13 @@ func HashTest(t *testing.T) {
 		assert.Equal(t, a, b)
 	}
 }
+
+func LockTest(t *testing.T) {
+	err := Lock()
+	assert.NoError(t, err)
+}
+
+func UnlockTest(t *testing.T) {
+	err := Unlock()
+	assert.NoError(t, err)
+}
