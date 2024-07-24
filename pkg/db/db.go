@@ -1,5 +1,7 @@
 package db
 
+import "sync"
+
 type Store interface {
 	Put(string, string) error
 	Get(string) (string, error)
@@ -10,22 +12,24 @@ type Store interface {
 	RUnlock() error
 }
 
-const (
-	Unlock = 0
-	Lock   = 1
-	RLock  = 2
-)
-
 type DB struct {
-	lock            int
+	mu              sync.RWMutex
 	dbSize          int
 	arrayOfPointers [][]string
 }
 
 func NewDB() DB {
 	return DB{
-		lock:            Unlock,
+		mu:              sync.RWMutex{},
 		dbSize:          100,
 		arrayOfPointers: [][]string{},
 	}
+}
+
+func (db *DB) Hash(key string) int {
+	var sum int = 0
+	for _, j := range []byte(key) {
+		sum += int(j)
+	}
+	return sum % db.dbSize
 }
