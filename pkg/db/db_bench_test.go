@@ -18,6 +18,20 @@ func PutBenchTest(b *testing.B) {
 	b.StopTimer()
 }
 
+func GetBenchTest(b *testing.B) {
+	db, err := NewDB()
+	if err != nil {
+		panic(err)
+	}
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		for _, tc := range TCS {
+			db.Get(tc.Key)
+		}
+	}
+	b.StopTimer()
+}
+
 type TestCase struct {
 	ID    int
 	Key   string
