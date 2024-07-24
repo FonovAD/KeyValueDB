@@ -23,6 +23,11 @@ func GetBenchTest(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
+	for i := 0; i < b.N; i++ {
+		for _, tc := range TCS {
+			db.Put(tc.Key, tc.Value)
+		}
+	}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
