@@ -182,3 +182,46 @@ func PutTest(t *testing.T) {
 		assert.Equal(t, tc.Expected, err)
 	}
 }
+
+func DeleteTest(t *testing.T) {
+	type TestCase struct {
+		ID       int
+		Name     string
+		Key      string
+		Value    string
+		Expected error
+	}
+	tcs := []TestCase{
+		TestCase{
+			ID:       1,
+			Name:     "Basic case",
+			Key:      "Key",
+			Value:    "Value",
+			Expected: nil,
+		},
+		TestCase{
+			ID:       2,
+			Name:     "Empty key",
+			Key:      "",
+			Value:    "Value",
+			Expected: db.ErrInvalidKey,
+		},
+		TestCase{
+			ID:       3,
+			Name:     "record not found",
+			Key:      "Key",
+			Value:    "Value",
+			Expected: db.ErrRecordNotFound,
+		},
+	}
+	for _, tc := range tcs {
+		db, err := NewDB()
+		assert.NoError(t, err)
+
+		err = db.Put(tc.Key, tc.Value)
+		assert.NoError(t, err)
+
+		err = db.Delete(tc.Key)
+		assert.Equal(t, tc.Expected, err)
+	}
+}
