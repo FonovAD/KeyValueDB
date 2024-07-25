@@ -84,3 +84,21 @@ func (db *DB) Put(key string, value string) error {
 	})
 	return nil
 }
+
+// TODO: добавить передачу по ссылке переменной для записи value
+func (db *DB) Get(key string) (string, error) {
+	switch {
+	case (len(key) < 1):
+		return "", ErrInvalidKey
+	}
+	ind, err := db.Hash(key)
+	if err != nil {
+		return "", ErrInvalidKey
+	}
+	for _, rec := range db.arrayOfPointers[ind] {
+		if rec.key == key {
+			return rec.value, nil
+		}
+	}
+	return "", nil
+}
