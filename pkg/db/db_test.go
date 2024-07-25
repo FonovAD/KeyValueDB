@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"github.com/PepsiKingIV/KeyValueDB/pkg/db"
+	DB "github.com/PepsiKingIV/KeyValueDB/pkg/db"
 	"github.com/stretchr/testify/assert"
 )
 
-func HashTest(t *testing.T) {
+func TestHash(t *testing.T) {
 	type TestCase struct {
 		ID       int
 		Name     string
@@ -35,14 +36,14 @@ func HashTest(t *testing.T) {
 			Name:     "Empty key",
 			Key:      "",
 			dbSize:   100,
-			Expected: db.ErrInvalidKey,
+			Expected: DB.ErrInvalidKey,
 		},
 		TestCase{
 			ID:       4,
 			Name:     "Too long key",
 			Key:      "qwertyuiop[]asdfghjkl;'zxcvbnm,./qwertyuiop[]asdfghjkl;'zxcvbnm,./qwertyuiop[]asdfghjkl;'zxcvbnm,./qwe",
 			dbSize:   100,
-			Expected: db.ErrKeyTooLong,
+			Expected: DB.ErrKeyTooLong,
 		},
 		TestCase{
 			ID:       5,
@@ -53,7 +54,7 @@ func HashTest(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db := db.NewDB()
+		db := DB.NewDB()
 
 		a, err := db.Hash(tc.Key)
 		assert.Equal(t, tc.Expected, err)
@@ -62,27 +63,39 @@ func HashTest(t *testing.T) {
 	}
 }
 
-func LockTest(t *testing.T) {
-	err := Lock()
+func TestLock(t *testing.T) {
+	db := DB.NewDB()
+
+	err := db.Lock()
+	db.Unlock()
 	assert.NoError(t, err)
 }
 
-func UnlockTest(t *testing.T) {
-	err := Unlock()
+func TestUnlock(t *testing.T) {
+	db := DB.NewDB()
+
+	db.Lock()
+	err := db.Unlock()
 	assert.NoError(t, err)
 }
 
-func RLockTest(t *testing.T) {
-	err := RLock()
+func TestRLock(t *testing.T) {
+	db := DB.NewDB()
+
+	err := db.RLock()
+	db.RUnlock()
 	assert.NoError(t, err)
 }
 
-func RUnlockTest(t *testing.T) {
-	err := RUnlock()
+func TestRUnlock(t *testing.T) {
+	db := DB.NewDB()
+
+	db.RLock()
+	err := db.RUnlock()
 	assert.NoError(t, err)
 }
 
-func GetTest(t *testing.T) {
+func TestGet(t *testing.T) {
 	type TestCase struct {
 		ID       int
 		Name     string
@@ -96,10 +109,9 @@ func GetTest(t *testing.T) {
 			ID:   1,
 			Name: "Basic case",
 			Prepare: func() {
-				db, err := NewDB()
-				assert.NoError(t, err)
+				db := DB.NewDB()
 
-				err = db.Put("Key", "Value")
+				err := db.Put("Key", "Value")
 				assert.NoError(t, err)
 			},
 			Key:   "Key",
@@ -131,11 +143,10 @@ func GetTest(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db, err := NewDB()
-		assert.NoError(t, err)
+		db := DB.NewDB()
 
 		//плохо, что результаты теста зависят от db.Put
-		err = db.Put(tc.Key, tc.Value)
+		err := db.Put(tc.Key, tc.Value)
 		assert.NoError(t, err)
 
 		tc.Prepare()
@@ -145,7 +156,7 @@ func GetTest(t *testing.T) {
 	}
 }
 
-func PutTest(t *testing.T) {
+func TestPut(t *testing.T) {
 	type TestCase struct {
 		ID       int
 		Name     string
@@ -177,15 +188,14 @@ func PutTest(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db, err := NewDB()
-		assert.NoError(t, err)
+		db := DB.NewDB()
 
-		err = db.Put(tc.Key, tc.Value)
+		err := db.Put(tc.Key, tc.Value)
 		assert.Equal(t, tc.Expected, err)
 	}
 }
 
-func DeleteTest(t *testing.T) {
+func TestDelete(t *testing.T) {
 	type TestCase struct {
 		ID       int
 		Name     string
@@ -217,10 +227,9 @@ func DeleteTest(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db, err := NewDB()
-		assert.NoError(t, err)
+		db := DB.NewDB()
 
-		err = db.Put(tc.Key, tc.Value)
+		err := db.Put(tc.Key, tc.Value)
 		assert.NoError(t, err)
 
 		err = db.Delete(tc.Key)
