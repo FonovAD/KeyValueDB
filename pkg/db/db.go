@@ -77,6 +77,16 @@ func (db *DB) Put(key string, value string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
+	for i, rec := range db.arrayOfPointers[ind] {
+		if (rec == Record{}) {
+			db.arrayOfPointers[ind][i] = Record{
+				key:       key,
+				value:     value,
+				createdAt: int(time.Now().Unix()),
+			}
+			return nil
+		}
+	}
 	db.arrayOfPointers[ind] = append(db.arrayOfPointers[ind], Record{
 		key:       key,
 		value:     value,
@@ -112,9 +122,9 @@ func (db *DB) Delete(key string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
-	for _, rec := range db.arrayOfPointers[ind] {
+	for i, rec := range db.arrayOfPointers[ind] {
 		if rec.key == key {
-			rec = Record{}
+			db.arrayOfPointers[ind][i] = Record{}
 		}
 	}
 	return nil
