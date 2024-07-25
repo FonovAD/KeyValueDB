@@ -32,7 +32,7 @@ func NewDB() DB {
 	return DB{
 		mu:              sync.RWMutex{},
 		dbSize:          100,
-		arrayOfPointers: [][]string{},
+		arrayOfPointers: [][]Record{},
 	}
 }
 
@@ -101,4 +101,21 @@ func (db *DB) Get(key string) (string, error) {
 		}
 	}
 	return "", nil
+}
+
+func (db *DB) Delete(key string) error {
+	switch {
+	case (len(key) < 1):
+		return ErrInvalidKey
+	}
+	ind, err := db.Hash(key)
+	if err != nil {
+		return ErrInvalidKey
+	}
+	for _, rec := range db.arrayOfPointers[ind] {
+		if rec.key == key {
+			rec = Record{}
+		}
+	}
+	return nil
 }
