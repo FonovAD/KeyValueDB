@@ -6,6 +6,7 @@ type Store interface {
 	Put(string, string) error
 	Get(string) (string, error)
 	Delete(string) error
+	Hash(string) (int, error)
 	Lock() error
 	Unlock() error
 	RLock() error
@@ -26,12 +27,18 @@ func NewDB() DB {
 	}
 }
 
-func (db *DB) Hash(key string) int {
+func (db *DB) Hash(key string) (int, error) {
+	switch {
+	case (len(key) < 1):
+		return -1, ErrInvalidKey
+	case (len(key) > 100):
+		return -1, ErrKeyTooLong
+	}
 	var sum int = 0
 	for _, j := range []byte(key) {
 		sum += int(j)
 	}
-	return sum % db.dbSize
+	return sum % db.dbSize, nil
 }
 
 func (db *DB) Lock() {
