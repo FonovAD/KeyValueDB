@@ -2,13 +2,12 @@ package db_test
 
 import (
 	"testing"
+
+	DB "github.com/PepsiKingIV/KeyValueDB/pkg/db"
 )
 
-func PutBenchTest(b *testing.B) {
-	db, err := NewDB()
-	if err != nil {
-		panic(err)
-	}
+func BenchmarkPut(b *testing.B) {
+	db := DB.NewDB()
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
@@ -18,11 +17,9 @@ func PutBenchTest(b *testing.B) {
 	b.StopTimer()
 }
 
-func GetBenchTest(b *testing.B) {
-	db, err := NewDB()
-	if err != nil {
-		panic(err)
-	}
+func BenchmarkGet(b *testing.B) {
+	db := DB.NewDB()
+
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Put(tc.Key, tc.Value)
@@ -37,11 +34,9 @@ func GetBenchTest(b *testing.B) {
 	b.StopTimer()
 }
 
-func DeleteBenchTest(b *testing.B) {
-	db, err := NewDB()
-	if err != nil {
-		panic(err)
-	}
+func BenchmarkDelete(b *testing.B) {
+	db := DB.NewDB()
+
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Put(tc.Key, tc.Value)
