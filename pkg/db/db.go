@@ -50,20 +50,24 @@ func (db *DB) Hash(key string) (int, error) {
 	return sum % db.dbSize, nil
 }
 
-func (db *DB) Lock() {
+func (db *DB) Lock() error {
 	db.mu.Lock()
+	return nil
 }
 
-func (db *DB) Unlock() {
+func (db *DB) Unlock() error {
 	db.mu.Unlock()
+	return nil
 }
 
-func (db *DB) RLock() {
+func (db *DB) RLock() error {
 	db.mu.RLock()
+	return nil
 }
 
-func (db *DB) RUnlock() {
+func (db *DB) RUnlock() error {
 	db.mu.RUnlock()
+	return nil
 }
 
 func (db *DB) Put(key string, value string) error {
