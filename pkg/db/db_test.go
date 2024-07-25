@@ -1,6 +1,7 @@
 package db_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/PepsiKingIV/KeyValueDB/pkg/db"
@@ -8,6 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	os.Exit(m.Run())
+}
 func TestHash(t *testing.T) {
 	type TestCase struct {
 		ID       int

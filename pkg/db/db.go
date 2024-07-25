@@ -29,11 +29,15 @@ type DB struct {
 }
 
 func NewDB() DB {
-	return DB{
+	db := DB{
 		mu:              sync.RWMutex{},
 		dbSize:          100,
-		arrayOfPointers: [][]Record{},
+		arrayOfPointers: make([][]Record, 100),
 	}
+	for i := range db.arrayOfPointers {
+		db.arrayOfPointers[i] = make([]Record, 8)
+	}
+	return db
 }
 
 func (db *DB) Hash(key string) (int, error) {
