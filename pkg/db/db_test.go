@@ -53,9 +53,11 @@ func HashTest(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		a, err := Hash(tc.Key, tc.dbSize)
-		b := Hash(tc.Key, tc.dbSize)
+		db := db.NewDB()
+
+		a, err := db.Hash(tc.Key)
 		assert.Equal(t, tc.Expected, err)
+		b, _ := db.Hash(tc.Key)
 		assert.Equal(t, a, b)
 	}
 }
