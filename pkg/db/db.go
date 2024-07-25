@@ -56,3 +56,18 @@ func (db *DB) RLock() {
 func (db *DB) RUnlock() {
 	db.mu.RUnlock()
 }
+
+func (db *DB) Put(key string, value string) error {
+	switch {
+	case (len(key) < 1):
+		return ErrInvalidKey
+	case (len(value) < 1):
+		return ErrInvalidValue
+	}
+	ind, err := db.Hash(key)
+	if err != nil {
+		return ErrInvalidKey
+	}
+	db.arrayOfPointers[ind][len(db.arrayOfPointers)] = value
+	return nil
+}
