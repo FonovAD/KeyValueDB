@@ -1,6 +1,9 @@
 package db
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type Store interface {
 	Put(string, string) error
@@ -13,10 +16,16 @@ type Store interface {
 	RUnlock() error
 }
 
+type Record struct {
+	key       string
+	value     string
+	createdAt int
+}
+
 type DB struct {
 	mu              sync.RWMutex
 	dbSize          int
-	arrayOfPointers [][]string
+	arrayOfPointers [][]Record
 }
 
 func NewDB() DB {
@@ -68,6 +77,10 @@ func (db *DB) Put(key string, value string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
-	db.arrayOfPointers[ind][len(db.arrayOfPointers)] = value
+	db.arrayOfPointers[ind] = append(db.arrayOfPointers[ind], Record{
+		key:       key,
+		value:     value,
+		createdAt: int(time.Now().Unix()),
+	})
 	return nil
 }
