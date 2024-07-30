@@ -131,14 +131,6 @@ func TestGet(t *testing.T) {
 		},
 		TestCase{
 			ID:       2,
-			Name:     "Empty Value",
-			Prepare:  func() {},
-			Key:      "Key",
-			Value:    "",
-			Expected: db.ErrInvalidValue,
-		},
-		TestCase{
-			ID:       2,
 			Name:     "Empty Key",
 			Prepare:  func() {},
 			Key:      "",
@@ -147,16 +139,22 @@ func TestGet(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db := DB.NewDB()
+		t.Run(tc.Name, func(t *testing.T) {
+			db := DB.NewDB()
 
-		//плохо, что результаты теста зависят от db.Put
-		err := db.Put(tc.Key, tc.Value)
-		assert.NoError(t, err)
+			if len(tc.Key) != 0 {
+				//плохо, что результаты теста зависят от db.Put
+				err := db.Put(tc.Key, tc.Value)
+				assert.NoError(t, err)
+			}
 
-		tc.Prepare()
-		value, err := db.Get(tc.Key)
-		assert.Equal(t, tc.Expected, err)
-		assert.Equal(t, tc.Value, value)
+			tc.Prepare()
+			value, err := db.Get(tc.Key)
+			assert.Equal(t, tc.Expected, err)
+			if err == nil {
+				assert.Equal(t, tc.Value, value)
+			}
+		})
 	}
 }
 

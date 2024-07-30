@@ -23,12 +23,13 @@ type Record struct {
 }
 
 type DB struct {
-	mu              sync.RWMutex
-	dbSize          int
+	mu     sync.RWMutex
+	dbSize int
+	// заменить массив из массивов на массив из указателей на связный список
 	arrayOfPointers [][]Record
 }
 
-func NewDB() DB {
+func NewDB() *DB {
 	db := DB{
 		mu:              sync.RWMutex{},
 		dbSize:          100,
@@ -37,7 +38,7 @@ func NewDB() DB {
 	for i := range db.arrayOfPointers {
 		db.arrayOfPointers[i] = make([]Record, 8)
 	}
-	return db
+	return &db
 }
 
 func (db *DB) Hash(key string) (int, error) {
