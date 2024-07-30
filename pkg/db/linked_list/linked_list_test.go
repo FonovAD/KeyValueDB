@@ -20,19 +20,19 @@ func Test_AddNode(t *testing.T) {
 		Expected error
 	}
 	tcs := []TestCase{
-		TestCase{
+		{
 			Name:     "Basic case",
 			Key:      "Key",
 			Value:    "Value",
 			Expected: nil,
 		},
-		TestCase{
+		{
 			Name:     "Invalid key",
 			Key:      "",
 			Value:    "Value",
 			Expected: nil,
 		},
-		TestCase{
+		{
 			Name:     "Invalid Value",
 			Key:      "Key",
 			Value:    "",
@@ -52,13 +52,12 @@ func Test_AddNode(t *testing.T) {
 func Test_DeleteNode(t *testing.T) {
 	type TestCase struct {
 		Name          string
-		Key           string
 		NodeForDelete linkedlist.Node
 		Node2         linkedlist.Node
 		Expected      error
 	}
 	tcs := []TestCase{
-		TestCase{
+		{
 			Name: "Basic case",
 			NodeForDelete: linkedlist.Node{
 				Key:      "ForDelete",
@@ -95,7 +94,7 @@ func Test_GetNode(t *testing.T) {
 		Expected error
 	}
 	tcs := []TestCase{
-		TestCase{
+		{
 			Name:  "Basic case",
 			Key:   "Key",
 			Value: "Value",
