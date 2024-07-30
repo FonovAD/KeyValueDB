@@ -6,43 +6,52 @@ import (
 	DB "github.com/PepsiKingIV/KeyValueDB/pkg/db"
 )
 
+func BenchmarkHash(b *testing.B) {
+	db := DB.NewDB()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for _, tc := range TCS {
+			db.Hash(tc.Key)
+		}
+	}
+}
+
 func BenchmarkPut(b *testing.B) {
 	db := DB.NewDB()
-	b.StartTimer()
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Put(tc.Key, tc.Value)
 		}
 	}
-	b.StopTimer()
+
 }
 
 func BenchmarkGet(b *testing.B) {
 	db := DB.NewDB()
 
-	for i := 0; i < b.N; i++ {
-		for _, tc := range TCS {
-			db.Put(tc.Key, tc.Value)
-		}
-	}
-	b.StartTimer()
+	// for i := 0; i < b.N; i++ {
+	// 	for _, tc := range TCS {
+	// 		db.Put(tc.Key, tc.Value)
+	// 	}
+	// }
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Get(tc.Key)
 		}
 	}
-	b.StopTimer()
 }
 
 func BenchmarkDelete(b *testing.B) {
 	db := DB.NewDB()
 
-	for i := 0; i < b.N; i++ {
-		for _, tc := range TCS {
-			db.Put(tc.Key, tc.Value)
-		}
-	}
-	b.StartTimer()
+	// for i := 0; i < b.N; i++ {
+	// 	for _, tc := range TCS {
+	// 		db.Put(tc.Key, tc.Value)
+	// 	}
+	// }
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Delete(tc.Key)
