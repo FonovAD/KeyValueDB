@@ -1,5 +1,10 @@
 package linkedlist
 
+import (
+	"errors"
+	"runtime"
+)
+
 type LinkedList interface {
 	Add(*Node, string, string) error
 	Get(*Node, string) (*Node, error)
@@ -34,4 +39,19 @@ func Get(node *Node, key string) (*Node, error) {
 		nextNode = nextNode.NextNode
 	}
 	return nextNode, nil
+}
+
+func Delete(node *Node, key string) error {
+	var nextNode *Node = node.NextNode
+	var currentNode *Node = node
+	for nextNode.Key != key {
+		currentNode = nextNode
+		nextNode = nextNode.NextNode
+		if currentNode.NextNode == nil {
+			return errors.New("No node")
+		}
+	}
+	currentNode.NextNode = nextNode.NextNode
+	runtime.GC()
+	return nil
 }

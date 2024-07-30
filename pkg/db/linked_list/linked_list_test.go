@@ -49,41 +49,41 @@ func Test_AddNode(t *testing.T) {
 	}
 }
 
-// func Test_DeleteNode(t *testing.T) {
-// 	type TestCase struct {
-// 		Name          string
-// 		Key           string
-// 		NodeForDelete linkedlist.Node
-// 		Node2         linkedlist.Node
-// 		Expected      error
-// 	}
-// 	tcs := []TestCase{
-// 		TestCase{
-// 			Name: "Basic case",
-// 			NodeForDelete: linkedlist.Node{
-// 				Key:      "Key1",
-// 				Value:    "Value1",
-// 				NextNode: nil,
-// 			},
-// 			Node2: linkedlist.Node{
-// 				Key:      "Key2",
-// 				Value:    "Value2",
-// 				NextNode: nil,
-// 			},
-// 			Expected: nil,
-// 		},
-// 	}
-// 	for _, tc := range tcs {
-// 		t.Run(tc.Name, func(t *testing.T) {
-// 			newNode := linkedlist.NewLinkedList()
-// 			newNode.NextNode = &tc.NodeForDelete
-// 			tc.Node2.NextNode = &tc.Node2
-// 			err := linkedlist.Delete(newNode, tc.NodeForDelete.Key)
-// 			assert.Equal(t, tc.Expected, err)
-// 			assert.Equal(t, newNode.NextNode, tc.Node2)
-// 		})
-// 	}
-// }
+func Test_DeleteNode(t *testing.T) {
+	type TestCase struct {
+		Name          string
+		Key           string
+		NodeForDelete linkedlist.Node
+		Node2         linkedlist.Node
+		Expected      error
+	}
+	tcs := []TestCase{
+		TestCase{
+			Name: "Basic case",
+			NodeForDelete: linkedlist.Node{
+				Key:      "ForDelete",
+				Value:    "ForDelete",
+				NextNode: nil,
+			},
+			Node2: linkedlist.Node{
+				Key:      "Key2",
+				Value:    "Value2",
+				NextNode: nil,
+			},
+			Expected: nil,
+		},
+	}
+	for _, tc := range tcs {
+		t.Run(tc.Name, func(t *testing.T) {
+			newNode := linkedlist.NewLinkedList()
+			newNode.NextNode = &tc.NodeForDelete
+			tc.NodeForDelete.NextNode = &tc.Node2
+			err := linkedlist.Delete(newNode, tc.NodeForDelete.Key)
+			assert.Equal(t, tc.Expected, err)
+			assert.Equal(t, *newNode.NextNode, tc.Node2)
+		})
+	}
+}
 
 func Test_GetNode(t *testing.T) {
 	type TestCase struct {
