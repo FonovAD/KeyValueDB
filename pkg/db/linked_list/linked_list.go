@@ -2,7 +2,7 @@ package linkedlist
 
 type LinkedList interface {
 	Add(*Node, string, string) error
-	Get(*Node, string) (string, error)
+	Get(*Node, string) (*Node, error)
 	Delete(*Node, string) error
 }
 
@@ -26,4 +26,12 @@ func Add(node *Node, key string, value string) error {
 		Value:    value,
 		NextNode: nil}
 	return nil
+}
+
+func Get(node *Node, key string) (*Node, error) {
+	nextNode := node
+	for nextNode.Key != key || nextNode.NextNode != nil {
+		nextNode = nextNode.NextNode
+	}
+	return nextNode, nil
 }

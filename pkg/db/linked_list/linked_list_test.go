@@ -85,41 +85,41 @@ func Test_AddNode(t *testing.T) {
 // 	}
 // }
 
-// func Test_GetNode(t *testing.T) {
-// 	type TestCase struct {
-// 		Name     string
-// 		Key      string
-// 		Value    string
-// 		Node1    linkedlist.Node
-// 		Node2    linkedlist.Node
-// 		Expected error
-// 	}
-// 	tcs := []TestCase{
-// 		TestCase{
-// 			Name:  "Basic case",
-// 			Key:   "Key",
-// 			Value: "Value",
-// 			Node1: linkedlist.Node{
-// 				Key:      "Key1",
-// 				Value:    "Value1",
-// 				NextNode: nil,
-// 			},
-// 			Node2: linkedlist.Node{
-// 				Key:      "Key2",
-// 				Value:    "Value2",
-// 				NextNode: nil,
-// 			},
-// 			Expected: nil,
-// 		},
-// 	}
-// 	for _, tc := range tcs {
-// 		t.Run(tc.Name, func(t *testing.T) {
-// 			newNode := linkedlist.NewLinkedList()
-// 			newNode.NextNode = &tc.Node1
-// 			tc.Node2.NextNode = &tc.Node2
-// 			node, err := linkedlist.Get(newNode, tc.Node1.Key)
-// 			assert.Equal(t, tc.Expected, err)
-// 			assert.Equal(t, tc.Value, node.Value)
-// 		})
-// 	}
-// }
+func Test_GetNode(t *testing.T) {
+	type TestCase struct {
+		Name     string
+		Key      string
+		Value    string
+		Node1    linkedlist.Node
+		Node2    linkedlist.Node
+		Expected error
+	}
+	tcs := []TestCase{
+		TestCase{
+			Name:  "Basic case",
+			Key:   "Key",
+			Value: "Value",
+			Node1: linkedlist.Node{
+				Key:      "Key1",
+				Value:    "Value1",
+				NextNode: nil,
+			},
+			Node2: linkedlist.Node{
+				Key:      "Key2",
+				Value:    "Value2",
+				NextNode: nil,
+			},
+			Expected: nil,
+		},
+	}
+	for _, tc := range tcs {
+		t.Run(tc.Name, func(t *testing.T) {
+			newNode := linkedlist.NewLinkedList()
+			newNode.NextNode = &tc.Node1
+			tc.Node2.NextNode = &tc.Node2
+			node, err := linkedlist.Get(newNode, tc.Node1.Key)
+			assert.Equal(t, tc.Expected, err)
+			assert.Equal(t, tc.Node1.Value, node.Value)
+		})
+	}
+}
