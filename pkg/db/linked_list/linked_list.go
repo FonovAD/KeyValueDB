@@ -21,15 +21,23 @@ func NewLinkedList() *Node {
 	return &Node{}
 }
 
+// записывать надо в начало. Запись сделанная последней, с большей вероятностью понадобится
+// К тому же это позволит сократить время записи => двойной профит Запись + Чтение
 func Add(node *Node, key string, value string) error {
-	nextNode := node
-	for nextNode.NextNode != nil {
-		nextNode = nextNode.NextNode
-	}
-	nextNode.NextNode = &Node{
+	// nextNode := node
+	// for nextNode.NextNode != nil {
+	// 	nextNode = nextNode.NextNode
+	// }
+
+	// nextNode.NextNode = &Node{
+	// 	Key:      key,
+	// 	Value:    value,
+	// 	NextNode: nil}
+	node.NextNode = &Node{
 		Key:      key,
 		Value:    value,
-		NextNode: nil}
+		NextNode: node.NextNode,
+	}
 	return nil
 }
 
