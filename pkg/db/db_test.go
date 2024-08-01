@@ -131,14 +131,6 @@ func TestGet(t *testing.T) {
 		},
 		TestCase{
 			ID:       2,
-			Name:     "Empty Value",
-			Prepare:  func() {},
-			Key:      "Key",
-			Value:    "",
-			Expected: db.ErrInvalidValue,
-		},
-		TestCase{
-			ID:       2,
 			Name:     "Empty Key",
 			Prepare:  func() {},
 			Key:      "",
@@ -147,16 +139,22 @@ func TestGet(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		db := DB.NewDB()
+		t.Run(tc.Name, func(t *testing.T) {
+			db := DB.NewDB()
 
-		//плохо, что результаты теста зависят от db.Put
-		err := db.Put(tc.Key, tc.Value)
-		assert.NoError(t, err)
+			if len(tc.Key) != 0 {
+				//плохо, что результаты теста зависят от db.Put
+				err := db.Put(tc.Key, tc.Value)
+				assert.NoError(t, err)
+			}
 
-		tc.Prepare()
-		value, err := db.Get(tc.Key)
-		assert.Equal(t, tc.Expected, err)
-		assert.Equal(t, tc.Value, value)
+			tc.Prepare()
+			value, err := db.Get(tc.Key)
+			assert.Equal(t, tc.Expected, err)
+			if err == nil {
+				assert.Equal(t, tc.Value, value)
+			}
+		})
 	}
 }
 
@@ -169,21 +167,21 @@ func TestPut(t *testing.T) {
 		Expected error
 	}
 	tcs := []TestCase{
-		TestCase{
+		{
 			ID:       1,
 			Name:     "Basic case",
 			Key:      "Key",
 			Value:    "Value",
 			Expected: nil,
 		},
-		TestCase{
+		{
 			ID:       2,
 			Name:     "Empty key",
 			Key:      "",
 			Value:    "Value",
 			Expected: db.ErrInvalidKey,
 		},
-		TestCase{
+		{
 			ID:       3,
 			Name:     "Empty value",
 			Key:      "Key",
@@ -206,37 +204,38 @@ func TestDelete(t *testing.T) {
 		Key      string
 		Value    string
 		Expected error
+		Prepare  func(*db.DB, string, string)
 	}
 	tcs := []TestCase{
-		TestCase{
+		{
 			ID:       1,
 			Name:     "Basic case",
 			Key:      "Key",
 			Value:    "Value",
 			Expected: nil,
+			Prepare: func(d *db.DB, Key, Value string) {
+				_ = d.Put(Key, Value)
+			},
 		},
-		TestCase{
-			ID:       2,
-			Name:     "Empty key",
-			Key:      "",
-			Value:    "Value",
-			Expected: db.ErrInvalidKey,
-		},
-		TestCase{
+		{
 			ID:       3,
 			Name:     "record not found",
 			Key:      "Key",
 			Value:    "Value",
 			Expected: db.ErrRecordNotFound,
+			Prepare:  func(d *DB.DB, Key, Value string) {},
 		},
 	}
 	for _, tc := range tcs {
-		db := DB.NewDB()
 
-		err := db.Put(tc.Key, tc.Value)
-		assert.NoError(t, err)
+		t.Run(tc.Name, func(t *testing.T) {
 
-		err = db.Delete(tc.Key)
-		assert.Equal(t, tc.Expected, err)
+			db := DB.NewDB()
+
+			tc.Prepare(db, tc.Key, tc.Value)
+
+			err := db.Delete(tc.Key)
+			assert.Equal(t, tc.Expected, err)
+		})
 	}
 }

@@ -2,7 +2,8 @@ package db
 
 import (
 	"sync"
-	"time"
+
+	linkedlist "github.com/PepsiKingIV/KeyValueDB/pkg/db/linked_list"
 )
 
 type Store interface {
@@ -16,28 +17,23 @@ type Store interface {
 	RUnlock() error
 }
 
-type Record struct {
-	key       string
-	value     string
-	createdAt int
-}
-
 type DB struct {
-	mu              sync.RWMutex
-	dbSize          int
-	arrayOfPointers [][]Record
+	mu     sync.RWMutex
+	dbSize int
+	// заменить массив из массивов на массив из указателей на связный список
+	arrayOfPointers []*linkedlist.Node
 }
 
-func NewDB() DB {
+func NewDB() *DB {
 	db := DB{
 		mu:              sync.RWMutex{},
 		dbSize:          100,
-		arrayOfPointers: make([][]Record, 100),
+		arrayOfPointers: make([]*linkedlist.Node, 100),
 	}
 	for i := range db.arrayOfPointers {
-		db.arrayOfPointers[i] = make([]Record, 8)
+		db.arrayOfPointers[i] = linkedlist.NewLinkedList()
 	}
-	return db
+	return &db
 }
 
 func (db *DB) Hash(key string) (int, error) {
@@ -85,21 +81,7 @@ func (db *DB) Put(key string, value string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
-	for i, rec := range db.arrayOfPointers[ind] {
-		if (rec == Record{}) {
-			db.arrayOfPointers[ind][i] = Record{
-				key:       key,
-				value:     value,
-				createdAt: int(time.Now().Unix()),
-			}
-			return nil
-		}
-	}
-	db.arrayOfPointers[ind] = append(db.arrayOfPointers[ind], Record{
-		key:       key,
-		value:     value,
-		createdAt: int(time.Now().Unix()),
-	})
+	linkedlist.Add(db.arrayOfPointers[ind], key, value)
 	return nil
 }
 
@@ -113,12 +95,11 @@ func (db *DB) Get(key string) (string, error) {
 	if err != nil {
 		return "", ErrInvalidKey
 	}
-	for _, rec := range db.arrayOfPointers[ind] {
-		if rec.key == key {
-			return rec.value, nil
-		}
+	rec, err := linkedlist.Get(db.arrayOfPointers[ind], key)
+	if err != nil {
+		return "", err
 	}
-	return "", nil
+	return rec.Value, err
 }
 
 func (db *DB) Delete(key string) error {
@@ -128,12 +109,14 @@ func (db *DB) Delete(key string) error {
 	}
 	ind, err := db.Hash(key)
 	if err != nil {
-		return ErrInvalidKey
+		return err
 	}
-	for i, rec := range db.arrayOfPointers[ind] {
-		if rec.key == key {
-			db.arrayOfPointers[ind][i] = Record{}
-		}
+	err = linkedlist.Delete(db.arrayOfPointers[ind], key)
+	switch {
+	case (err == linkedlist.ErrNotFound):
+		return ErrRecordNotFound
+	case (err != nil):
+		return err
 	}
 	return nil
 }
