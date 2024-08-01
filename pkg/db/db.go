@@ -17,12 +17,6 @@ type Store interface {
 	RUnlock() error
 }
 
-type Record struct {
-	key       string
-	value     string
-	createdAt int
-}
-
 type DB struct {
 	mu     sync.RWMutex
 	dbSize int
@@ -102,6 +96,9 @@ func (db *DB) Get(key string) (string, error) {
 		return "", ErrInvalidKey
 	}
 	rec, err := linkedlist.Get(db.arrayOfPointers[ind], key)
+	if err != nil {
+		return "", err
+	}
 	return rec.Value, err
 }
 
@@ -112,8 +109,14 @@ func (db *DB) Delete(key string) error {
 	}
 	ind, err := db.Hash(key)
 	if err != nil {
-		return ErrInvalidKey
+		return err
 	}
-	linkedlist.Delete(db.arrayOfPointers[ind], key)
+	err = linkedlist.Delete(db.arrayOfPointers[ind], key)
+	switch {
+	case (err == linkedlist.ErrNotFound):
+		return ErrRecordNotFound
+	case (err != nil):
+		return err
+	}
 	return nil
 }

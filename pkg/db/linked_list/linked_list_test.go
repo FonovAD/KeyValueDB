@@ -96,8 +96,8 @@ func Test_GetNode(t *testing.T) {
 	tcs := []TestCase{
 		{
 			Name:  "Basic case",
-			Key:   "Key",
-			Value: "Value",
+			Key:   "Key1",
+			Value: "Value1",
 			Node1: linkedlist.Node{
 				Key:      "Key1",
 				Value:    "Value1",
@@ -110,15 +110,33 @@ func Test_GetNode(t *testing.T) {
 			},
 			Expected: nil,
 		},
+		{
+			Name:  "Not found",
+			Key:   "Key",
+			Value: "Value",
+			Node1: linkedlist.Node{
+				Key:      "",
+				Value:    "",
+				NextNode: nil,
+			},
+			Node2: linkedlist.Node{
+				Key:      "",
+				Value:    "",
+				NextNode: nil,
+			},
+			Expected: linkedlist.ErrNotFound,
+		},
 	}
 	for _, tc := range tcs {
 		t.Run(tc.Name, func(t *testing.T) {
 			newNode := linkedlist.NewLinkedList()
 			newNode.NextNode = &tc.Node1
 			tc.Node2.NextNode = &tc.Node2
-			node, err := linkedlist.Get(newNode, tc.Node1.Key)
+			node, err := linkedlist.Get(newNode, tc.Key)
 			assert.Equal(t, tc.Expected, err)
-			assert.Equal(t, tc.Node1.Value, node.Value)
+			if err == nil {
+				assert.Equal(t, tc.Node1.Value, node.Value)
+			}
 		})
 	}
 }

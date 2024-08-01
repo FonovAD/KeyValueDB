@@ -1,7 +1,6 @@
 package linkedlist
 
 import (
-	"errors"
 	"runtime"
 )
 
@@ -43,8 +42,11 @@ func Add(node *Node, key string, value string) error {
 
 func Get(node *Node, key string) (*Node, error) {
 	nextNode := node
-	for nextNode.Key != key || nextNode.NextNode != nil {
+	for nextNode.NextNode != nil && nextNode.Key != key {
 		nextNode = nextNode.NextNode
+	}
+	if nextNode.Key != key {
+		return nil, ErrNotFound
 	}
 	return nextNode, nil
 }
@@ -52,11 +54,14 @@ func Get(node *Node, key string) (*Node, error) {
 func Delete(node *Node, key string) error {
 	var nextNode *Node = node.NextNode
 	var currentNode *Node = node
+	if nextNode == nil {
+		return ErrNotFound
+	}
 	for nextNode.Key != key {
 		currentNode = nextNode
 		nextNode = nextNode.NextNode
 		if currentNode.NextNode == nil {
-			return errors.New("No node")
+			return ErrNotFound
 		}
 	}
 	currentNode.NextNode = nextNode.NextNode
