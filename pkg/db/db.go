@@ -2,7 +2,8 @@ package db
 
 import (
 	"sync"
-	"time"
+
+	linkedlist "github.com/PepsiKingIV/KeyValueDB/pkg/db/linked_list"
 )
 
 type Store interface {
@@ -26,17 +27,17 @@ type DB struct {
 	mu     sync.RWMutex
 	dbSize int
 	// заменить массив из массивов на массив из указателей на связный список
-	arrayOfPointers [][]Record
+	arrayOfPointers []*linkedlist.Node
 }
 
 func NewDB() *DB {
 	db := DB{
 		mu:              sync.RWMutex{},
 		dbSize:          100,
-		arrayOfPointers: make([][]Record, 100),
+		arrayOfPointers: make([]*linkedlist.Node, 100),
 	}
 	for i := range db.arrayOfPointers {
-		db.arrayOfPointers[i] = make([]Record, 8)
+		db.arrayOfPointers[i] = linkedlist.NewLinkedList()
 	}
 	return &db
 }
@@ -86,21 +87,7 @@ func (db *DB) Put(key string, value string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
-	for i, rec := range db.arrayOfPointers[ind] {
-		if (rec == Record{}) {
-			db.arrayOfPointers[ind][i] = Record{
-				key:       key,
-				value:     value,
-				createdAt: int(time.Now().Unix()),
-			}
-			return nil
-		}
-	}
-	db.arrayOfPointers[ind] = append(db.arrayOfPointers[ind], Record{
-		key:       key,
-		value:     value,
-		createdAt: int(time.Now().Unix()),
-	})
+	linkedlist.Add(db.arrayOfPointers[ind], key, value)
 	return nil
 }
 
@@ -114,12 +101,8 @@ func (db *DB) Get(key string) (string, error) {
 	if err != nil {
 		return "", ErrInvalidKey
 	}
-	for _, rec := range db.arrayOfPointers[ind] {
-		if rec.key == key {
-			return rec.value, nil
-		}
-	}
-	return "", nil
+	rec, err := linkedlist.Get(db.arrayOfPointers[ind], key)
+	return rec.Value, err
 }
 
 func (db *DB) Delete(key string) error {
@@ -131,10 +114,6 @@ func (db *DB) Delete(key string) error {
 	if err != nil {
 		return ErrInvalidKey
 	}
-	for i, rec := range db.arrayOfPointers[ind] {
-		if rec.key == key {
-			db.arrayOfPointers[ind][i] = Record{}
-		}
-	}
+	linkedlist.Delete(db.arrayOfPointers[ind], key)
 	return nil
 }
