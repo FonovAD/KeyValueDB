@@ -77,6 +77,8 @@ func (db *DB) Put(key string, value string) error {
 	case (len(value) < 1):
 		return ErrInvalidValue
 	}
+	db.Lock()
+	defer db.Unlock()
 	ind, err := db.Hash(key)
 	if err != nil {
 		return ErrInvalidKey
@@ -91,6 +93,8 @@ func (db *DB) Get(key string) (string, error) {
 	case (len(key) < 1):
 		return "", ErrInvalidKey
 	}
+	db.RLock()
+	defer db.RUnlock()
 	ind, err := db.Hash(key)
 	if err != nil {
 		return "", ErrInvalidKey
@@ -107,6 +111,8 @@ func (db *DB) Delete(key string) error {
 	case (len(key) < 1):
 		return ErrInvalidKey
 	}
+	db.Lock()
+	defer db.Unlock()
 	ind, err := db.Hash(key)
 	if err != nil {
 		return err
