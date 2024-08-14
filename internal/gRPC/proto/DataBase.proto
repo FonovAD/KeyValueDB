@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package service;
+
+option go_package = "./service";
+
+message SetRequest{
+    string Key = 1;
+    string Value = 2;
+}
+
+message SetResponse{
+    string Key = 1;
+    string Status = 2;
+}
+
+message GetRequest{
+    string Key = 1;
+}
+
+message GetResponse{
+    string Key = 1;
+    string Value = 2;
+}
+
+message DelRequest{
+    string Key = 1;
+}
+
+message DelResponse{
+    string Key = 1;
+    string Status = 2;
+}
+
+service Service{
+    rpc Set(SetRequest) returns (SetResponse);
+    rpc Get(GetRequest) returns (GetResponse);
+    rpc Delete(DelRequest) returns (DelResponse);
+}
