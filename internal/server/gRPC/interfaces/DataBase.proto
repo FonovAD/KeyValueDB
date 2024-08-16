@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package store;
+
+option go_package = "./key_value";
+
+message SetRequest{
+    string Key = 1;
+    string Value = 2;
+}
+
+message SetResponse{
+    string Key = 1;
+    string Status = 2;
+}
+
+message GetRequest{
+    string Key = 1;
+}
+
+message GetResponse{
+    string Key = 1;
+    string Value = 2;
+}
+
+message DelRequest{
+    string Key = 1;
+}
+
+message DelResponse{
+    string Key = 1;
+    string Status = 2;
+}
+
+service Store{
+    rpc Set(SetRequest) returns (SetResponse);
+    rpc Get(GetRequest) returns (GetResponse);
+    rpc Delete(DelRequest) returns (DelResponse);
+}
