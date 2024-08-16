@@ -36,7 +36,10 @@ func (s *serverAPI) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetRespons
 		return nil, status.Error(codes.InvalidArgument, "key cannot be of zero length")
 	}
 	value, err := s.store.Get(req.Key)
-	if err != nil {
+	switch {
+	case err == db.ErrRecordNotFound:
+		return nil, status.Error(codes.NotFound, errors.Join(ErrStoreGet, err).Error())
+	case err != nil:
 		return nil, status.Error(codes.Unknown, errors.Join(ErrStoreGet, err).Error())
 	}
 	return &pb.GetResponse{Key: req.GetKey(), Value: value}, nil
@@ -46,7 +49,10 @@ func (s *serverAPI) Delete(ctx context.Context, req *pb.DelRequest) (*pb.DelResp
 		return nil, status.Error(codes.InvalidArgument, "key cannot be of zero length")
 	}
 	err := s.store.Delete(req.GetKey())
-	if err != nil {
+	switch {
+	case err == db.ErrRecordNotFound:
+		return nil, status.Error(codes.NotFound, errors.Join(ErrStoreDel, err).Error())
+	case err != nil:
 		return nil, status.Error(codes.Unknown, errors.Join(ErrStoreDel, err).Error())
 	}
 	return &pb.DelResponse{Key: req.GetKey(), Status: "1"}, nil
