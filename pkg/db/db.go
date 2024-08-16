@@ -18,9 +18,8 @@ type Store interface {
 }
 
 type DB struct {
-	mu     sync.RWMutex
-	dbSize int
-	// заменить массив из массивов на массив из указателей на связный список
+	mu              sync.RWMutex
+	dbSize          int
 	arrayOfPointers []*linkedlist.Node
 }
 
@@ -100,7 +99,10 @@ func (db *DB) Get(key string) (string, error) {
 		return "", ErrInvalidKey
 	}
 	rec, err := linkedlist.Get(db.arrayOfPointers[ind], key)
-	if err != nil {
+	switch {
+	case (err == linkedlist.ErrNotFound):
+		return "", ErrRecordNotFound
+	case (err != nil):
 		return "", err
 	}
 	return rec.Value, err
