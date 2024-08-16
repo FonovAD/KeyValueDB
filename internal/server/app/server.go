@@ -5,6 +5,7 @@ import (
 	"net"
 
 	storeRPC "github.com/PepsiKingIV/KeyValueDB/internal/server/gRPC/store"
+	"github.com/PepsiKingIV/KeyValueDB/pkg/db"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -15,10 +16,10 @@ type App struct {
 	port       int
 }
 
-func New(logger *zap.Logger, port int) *App {
+func New(database db.Store, logger *zap.Logger, port int) *App {
 	gRPCServer := grpc.NewServer()
 
-	storeRPC.Register(gRPCServer)
+	storeRPC.Register(gRPCServer, database)
 	return &App{
 		logger:     logger,
 		gRPCServer: gRPCServer,

@@ -6,6 +6,7 @@ import (
 	"syscall"
 
 	"github.com/PepsiKingIV/KeyValueDB/internal/server/app"
+	"github.com/PepsiKingIV/KeyValueDB/pkg/db"
 	"go.uber.org/zap"
 )
 
@@ -13,7 +14,8 @@ func main() {
 
 	logger := zap.Must(zap.NewProduction())
 	port := 4012
-	application := app.New(logger, port)
+	database := db.NewDB()
+	application := app.New(database, logger, port)
 
 	go application.MustRun()
 
