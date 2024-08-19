@@ -19,7 +19,7 @@ type App struct {
 func New(database db.Store, logger *zap.Logger, port int) *App {
 	gRPCServer := grpc.NewServer()
 
-	storeRPC.Register(gRPCServer, database)
+	storeRPC.Register(gRPCServer, database, logger)
 	return &App{
 		logger:     logger,
 		gRPCServer: gRPCServer,
