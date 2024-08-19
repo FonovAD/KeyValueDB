@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	Port int `env:"KEYVALUE_PORT,required"`
+	Port int `env:"KEYVALUE_PORT"`
 }
 
 func WithDefault(ctx context.Context) *Config {
