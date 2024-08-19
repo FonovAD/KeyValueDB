@@ -1,34 +1,40 @@
 package db_test
 
 import (
+	"context"
 	"testing"
 
 	DB "github.com/PepsiKingIV/KeyValueDB/pkg/db"
 )
 
 func BenchmarkHash(b *testing.B) {
-	db := DB.NewDB()
+	ctxb := context.Background()
+
+	db := DB.NewDB(ctxb, false)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
-			db.Hash(tc.Key)
+			db.Hash(tc.Key, 100)
 		}
 	}
 }
 
 func BenchmarkPut(b *testing.B) {
-	db := DB.NewDB()
+	ctxb := context.Background()
+
+	db := DB.NewDB(ctxb, false)
+	ctxb.Done()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
 			db.Put(tc.Key, tc.Value)
 		}
 	}
-
 }
 
 func BenchmarkGet(b *testing.B) {
-	db := DB.NewDB()
+	ctxb := context.Background()
+	db := DB.NewDB(ctxb, true)
 
 	// for i := 0; i < b.N; i++ {
 	// 	for _, tc := range TCS {
@@ -41,10 +47,12 @@ func BenchmarkGet(b *testing.B) {
 			db.Get(tc.Key)
 		}
 	}
+	ctxb.Done()
 }
 
 func BenchmarkDelete(b *testing.B) {
-	db := DB.NewDB()
+	ctxb := context.Background()
+	db := DB.NewDB(ctxb, true)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, tc := range TCS {
@@ -52,6 +60,7 @@ func BenchmarkDelete(b *testing.B) {
 		}
 	}
 	b.StopTimer()
+	ctxb.Done()
 }
 
 type TestCase struct {
